@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='teacher.css') }}">
+    <title>Professor View</title>
+</head>
+<body>
+    <h2>Monster's University</h2>
+    <p>Welcome Professor {{ firstname }} {{ lastname }}</p> 
+    <input type="button" value="Sign Out" onclick="signOut()">
+    <input type="button" value="New Course" onclick="addCourses()">
+    <input type="button" value="View Your Course(s)" onclick="yourCourses()">
+    
+    <div id="NewCourse" class="table-container" style="display:none;">
+        <h3>New Course</h3>
+        <div>
+            <label for="class_name"> Name of new Class:</label><br><br> 
+            <input type="text" class="tbox2" id="class_name" name="class_name" /><br><br>
+            <label for="class_teacher"> ID of New Class:</label><br><br>
+            <input type="text" class="tbox2" id="class_ID" name="class_ID" /><br><br>
+            <label for="class_teacher"> Full Name of Assigned Teacher:</label><br><br>
+            <input type="text" class="tbox2" id="class_teacher" name="class_teacher" /><br><br>
+            <label for="class_size">Class Size:</label><br><br>
+            <input type="text" class="tbox2" id="class_size" name="class_size"/><br><br>
+            <label for="class_size">Class Day:</label><br><br>
+            <input type="text" class="tbox2" id="class_day" name="class_day"/><br><br>
+            <label for="class_size">Class Time:</label><br><br>
+            <input type="text" class="tbox2" id="class_time" name="class_time"/><br><br>
+            <input type="submit" class="subbox2" onclick="newClass()" value="Post">
+            
+            <div id="showClass"></div>
+        </div>
+    </div>
+    
+    <div id="yourCourses" class="table-container" style="display:none;">
+        <h3>Your Courses</h3>
+        {% for class_list in teaching_classes %}
+            <h4>{{ class_list.Name }}</h4>
+            <table class="table1">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Current Grade</th>
+                        <th>Edit Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in class_list.enrollment %}
+                        <tr>
+                            <td>{{ enrollment.student_name }}</td>
+                            <td>{{ enrollment.grade }}%</td>
+                            <td>
+                                <input type="number" id="edit-{{ enrollment.student_name|replace(' ', '') }}-grade" class="new-grade">
+                                <button onclick="editGrade('{{ enrollment.student_name }}', '{{ class_list.Name }}')">Save</button>                                
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>      
+    
+    <div id="enrolledStudentsModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h4>Enrolled Students</h4>
+            <ul id="enrolledStudentsList"></ul>
+        </div>
+    </div>
+
+<script>
+    var newGrade = document.getElementById("edit-" + studentName.replace(/\s/g, '') + "-grade").value;
+    function yourCourses(){
+        document.getElementById('yourCourses').style.display = 'block';
+        document.getElementById('NewCourse').style.display = 'none';
+    }
+    function addCourses(){
+        document.getElementById('yourCourses').style.display = 'none';
+        document.getElementById('NewCourse').style.display = 'block';
+    }
+    function newClass() {
+        var req = new XMLHttpRequest();
+        var class_name = document.getElementById("class_name").value;
+        var class_teacher = document.getElementById("class_teacher").value;
+        var class_size = document.getElementById("class_size").value;
+        var class_ID = document.getElementById("class_ID").value;
+        var class_day = document.getElementById("class_day").value;
+        var class_time = document.getElementById("class_time").value;
+        req.open("POST", "http://127.0.0.1:5000/classes/", true);
+        req.setRequestHeader("Content-Type", "application/json");
+        const body = {
+            "class_name": String(class_name), 
+            "class_teacher": String(class_teacher), 
+            "class_size": String(class_size), 
+            "class_ID":String(class_ID), 
+            "class_day":String(class_day), 
+            "class_time":String(class_time)
+        };
+        req.send(JSON.stringify(body));
+    }
+    function signOut() {
+        // Perform sign out logic here
+        alert('Signing out');
+        window.location.href = '/';
+    }
+    function editGrade(studentName, className) {
+    console.log("Student Name:", studentName);
+    console.log("Class Name:", className);
+
+    var newGrade = document.getElementById("edit-" + studentName.replace(/\s/g, '') + "-grade").value;
+    console.log("New Grade:", newGrade);
+
+    var req = new XMLHttpRequest();
+    req.open("POST", "/edit_grade/" + className + "/" + studentName); // Adjusted URL
+    req.setRequestHeader("Content-Type", "application/json");
+    req.onreadystatechange = function () {
+        if (req.readyState === XMLHttpRequest.DONE) {
+            if (req.status === 200) {
+                // Handle success
+                alert("Grade updated successfully!");
+            } else {
+                // Handle error
+                alert("Error updating grade");
+            }
+        }
+    };
+    req.send(JSON.stringify({ studentName: studentName, newGrade: newGrade }));
+}
+
+
+    // Function to fetch enrolled students for a specific class
+    function fetchEnrolledStudents(className) {
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+            if (req.readyState === XMLHttpRequest.DONE) {
+                if (req.status === 200) {
+                    // Success - display enrolled students in a modal
+                    var enrolledStudentsModal = document.getElementById("enrolledStudentsModal");
+                    var enrolledStudentsList = document.getElementById("enrolledStudentsList");
+                    enrolledStudentsList.innerHTML = ""; // Clear previous content
+
+                    var enrolledStudents = JSON.parse(req.responseText);
+                    enrolledStudents.forEach(function (student) {
+                        var li = document.createElement("li");
+                        li.textContent = student[0] + " (Grade: " + student[1] + "%)";
+                        enrolledStudentsList.appendChild(li);
+                    });
+
+                    enrolledStudentsModal.style.display = "block";
+                } else {
+                    // Error handling
+                    console.error("Error fetching enrolled students:", req.status, req.statusText);
+                }
+            }
+        };
+
+        req.open("GET", "/enrolled_students/" + className, true);
+        req.send();
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        var modal = document.getElementById("enrolledStudentsModal");
+        modal.style.display = "none";
+    }
+
+    // Add event listener to each course button
+    var buttons = document.querySelectorAll(".btn-course");
+    buttons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            var className = this.getAttribute("data-class");
+            fetchEnrolledStudents(className);
+        });
+    });
+</script>
+
+</body>
+</html>

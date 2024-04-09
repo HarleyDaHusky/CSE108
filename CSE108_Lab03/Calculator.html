@@ -1,0 +1,158 @@
+<html lang="en"><head>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class = "calculator">
+        <input type = "text" id="display" disabled>
+        <input type = "button" value = "C" onclick = "clearDisplay()">
+        <br>
+        <input type = "button" value="7" id = "number" onclick = "addToDisplay('7')">
+        <input type = "button" value="8" id = "number" onclick = "addToDisplay('8')">
+        <input type = "button" value="9" id = "number" onclick = "addToDisplay('9')">
+        <input type = "button" value="/" id = "operation1" onclick = "addOperation('/')">
+        <br>
+        <input type = "button" value="4" id = "number" onclick = "addToDisplay('4')">
+        <input type = "button" value="5" id = "number" onclick = "addToDisplay('5')">
+        <input type = "button" value="6" id = "number" onclick = "addToDisplay('6')">
+        <input type = "button" value="*" id = "operation2" onclick = "addOperation('*')">
+        <br>
+        <input type = "button" value="1" id = "number" onclick = "addToDisplay('1')">
+        <input type = "button" value="2" id = "number" onclick = "addToDisplay('2')">
+        <input type = "button" value="3" id = "number" onclick = "addToDisplay('3')">
+        <input type = "button" value="-" id = "operation3" onclick = "addOperation('-')">
+        <br>
+        <input type = "button" value="0" id = "number" onclick = "addToDisplay('0')">
+        <input type = "button" value="." id = "number" onclick = "addToDisplay('.')">
+        <input type = "button" value="=" id = "operation" onclick = "calculate()">
+        <input type = "button" value="+" id = "operation4" onclick = "addOperation('+')">
+        <br>
+    </div>
+    <script>
+        //Startup calcluator with '0' in the textbox rather than empty
+        document.getElementById('display').value = '0';
+        mathValue = '0'
+        previous = '0'
+        lastOperation = '0'
+        lastNumber = '0'
+        sincePreviousCalculations = 0;
+        sincePreviousOperation = 0;
+        let operationCount = 0;
+        let prevOp = false;
+        function addToDisplay(num){
+            sincePreviousCalculations++;
+            if(document.getElementById('display').value == '0' && num != '.'){
+                document.getElementById('display').value = num;
+                mathValue = num;
+                lastNumber = num;
+                }
+            else{
+                if (prevOp == true){
+                    document.getElementById('display').value = num;
+                    mathValue += num;
+                    prevOp = false;
+                    lastNumber = num;
+                }
+                else{
+                    document.getElementById('display').value += num;
+                    mathValue += num;
+                    lastNumber = num;
+                }
+            }
+        }
+
+        function addOperation(operation){
+            sincePreviousCalculations++;
+            if(sincePreviousOperation > 0){
+                button.classList.remove('highlight');
+                if(operation=='+'){
+                    button = document.getElementById('operation4')
+                    sincePreviousOperation++;
+                }
+                else if(operation=='-'){
+                    button = document.getElementById('operation3')
+                    sincePreviousOperation++;
+                }
+                else if(operation=='/'){
+                    button = document.getElementById('operation1')
+                    sincePreviousOperation++;
+                }
+                else if(operation=='*'){
+                    button = document.getElementById('operation2')
+                    sincePreviousOperation++;
+                }
+                else{
+                    button = document.getElementById('operation')
+                    sincePreviousOperation++;
+                }
+            }
+            else{
+                if(operation=='+'){
+                    button = document.getElementById('operation4')
+                    sincePreviousOperation++;
+                }
+                else if(operation=='-'){
+                    button = document.getElementById('operation3')
+                    sincePreviousOperation++;
+                }
+                else if(operation=='/'){
+                    button = document.getElementById('operation1')
+                    sincePreviousOperation++;
+                }
+                else if(operation=='*'){
+                    button = document.getElementById('operation2')
+                    sincePreviousOperation++;
+                }                
+                else{
+                    button = document.getElementById('operation')
+                    sincePreviousOperation++;
+                }
+            }
+            button.classList.add('highlight');
+            if(operationCount > 0){
+                try{
+                    display.value = eval(mathValue);
+                    mathValue += operation;
+                    prevOp = true;
+                    lastOperation = operation;
+                }
+                catch (error){
+                    display.value = 'Error';
+                }        
+            }
+            else{
+                mathValue += operation;
+                operationCount++;
+                prevOp = true;
+                lastOperation = operation;
+            }
+        }
+
+        function clearDisplay(){
+            document.getElementById('display').value = '0';
+            mathValue = '0';
+            operationCount = 0;
+            button.classList.remove('highlight');
+        }
+
+        function calculate(){
+            let display = document.getElementById('display');
+            //Attempts to calculate whatever is in the calculator text box
+            try{
+                if(sincePreviousCalculations == 0){
+                    mathValue += lastOperation + lastNumber;
+                    display.value = eval(mathValue)
+                }
+                else{
+                    display.value = eval(mathValue);
+                    sincePreviousCalculations = 0;
+                }
+            }
+            //If any errors, outputs error into the calculator text
+            catch (error){
+                display.value = 'Error';
+            }
+            button.classList.remove('highlight');
+        }
+    </script>
+</body>
+</html>

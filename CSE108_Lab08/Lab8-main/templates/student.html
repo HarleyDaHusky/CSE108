@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='student.css') }}">
+    <!-- <link rel="stylesheet" href="student.css"> -->
+</head>
+<body>
+    <h2>Monster's University</h2>
+    <p>Welcome {{ firstname }} {{lastname}}</p> 
+    <input type="button" value="Sign Out" onclick="signOut()">
+    <input type="button" value="Your Courses" onclick="yourCourses()">
+    <input type="button" value="Add Courses" onclick="addCourses()">
+    
+<!-- your courses -->
+<div id="yourCoursesTable" class="table-container">
+    <h3>Your Courses</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Course Name</th>
+                <th>Teacher</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Students Enrolled</th>
+                <th>Drop Class</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for class in enrolled_classes %}
+            <tr>
+                <td>{{ class.class_name }}</td>
+                <td>{{ class.Classes.teacher_name }}</td>
+                <td>{{ class.Classes.day }}</td>
+                <td>{{ class.Classes.time }}</td>
+                <td>{{ class.Classes.enrollment|length }}/{{ class.Classes.capacity }}</td>
+                <td><button onclick="drop('{{ class.Classes.Name }}', '{{ firstname }}', '{{ lastname }}')">Drop</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+    
+    <!-- add Courses -->
+    <div id="addCoursesTable" class="table-container" style="display:none;">
+        <h3>Add Courses</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Course Name</th>
+                    <th>Teacher</th>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Students Enrolled</th>
+                    <th>Add Class</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for class in available_classes %}
+                <tr>
+                    <td>{{ class.Name }}</td>
+                    <td>{{ class.teacher_name }}</td>
+                    <td>{{class.day }}</td>
+                    <td>{{ class.time }}</td>
+                    <td>{{ class.enrollment|length }}/{{ class.capacity }}</td>
+                    <td><button onclick="enroll('{{ class.Name }}', '{{ firstname }}', '{{ lastname }}')">Enroll</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function yourCourses() {
+            document.getElementById('yourCoursesTable').style.display = 'block';
+            document.getElementById('addCoursesTable').style.display = 'none';
+        }
+
+        function addCourses() {
+            document.getElementById('yourCoursesTable').style.display = 'none';
+            document.getElementById('addCoursesTable').style.display = 'block';
+        }
+
+        function enroll(className, firstname, lastname) {
+            const req = new XMLHttpRequest();
+            req.open("POST", "http://127.0.0.1:5000/enroll/" + className + "/" + firstname + "/" + lastname);
+            req.setRequestHeader("Content-Type", "application/json");
+            req.send();
+        }
+
+        function drop(class_name, firstname, lastname) {
+            const req = new XMLHttpRequest();
+            req.open("DELETE", "http://127.0.0.1:5000/drop/" + class_name + "/" + firstname + "/" + lastname);
+            req.setRequestHeader("Content-Type", "application/json");
+            req.send();
+        }
+
+        function signOut() {
+            // Perform sign out logic here
+            alert('Signing out');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

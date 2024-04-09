@@ -1,0 +1,23 @@
+html, body{
+    margin: 10;
+    padding: 0;
+    background-color: rgb(201, 224, 255);
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
+    width: fit-content;
+    justify-content: center;
+}
+
+.create_acc-form{
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: fit-content;
+}
+.error-message {
+    color: red;
+    font-weight: bold;
+}

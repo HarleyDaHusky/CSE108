@@ -1,0 +1,67 @@
+.calculator{
+    width: 525px;
+    height: 525px;
+    margin: auto;
+    border: 1px solid black;
+    padding: 10px;
+    border-radius: 3px;
+    background-color: rgb(189, 189, 189);
+}
+.calculator input[type = "button"]{
+    width: 85px;
+    height: 85px;
+    left: 80px;
+    padding: center;
+    margin: 10px;
+    margin-left: 15px;
+    font-size: 1.5em;
+}
+.calculator input[id = number]{
+    border: 1px solid rgb(0, 102, 105);
+    background-color: rgb(59, 165, 214);
+    margin-left: 30px;
+}
+.calculator input[id = operation1]{
+    border: 1px solid rgb(0, 102, 105);
+    background-color: rgb(2, 197, 2);
+    margin-left: 30px;
+}
+.calculator input[id = operation2]{
+    border: 1px solid rgb(0, 102, 105);
+    background-color: rgb(2, 197, 2);
+    margin-left: 30px;
+}
+.calculator input[id = operation3]{
+    border: 1px solid rgb(0, 102, 105);
+    background-color: rgb(2, 197, 2);
+    margin-left: 30px;
+}
+.calculator input[id = operation4]{
+    border: 1px solid rgb(0, 102, 105);
+    background-color: rgb(2, 197, 2);
+    margin-left: 30px;
+}
+.calculator input[id = operation]{
+    border: 1px solid rgb(0, 102, 105);
+    background-color: rgb(2, 197, 2);
+    margin-left: 30px;
+}
+.calculator input[value="C"]{
+    border: 1px solid rgb(0, 102, 105);
+    background-color: orange
+}
+
+.calculator input[type = "text"]{
+    width: 400;
+    height: 84px;
+    margin-bottom: 5px;
+    padding: 30px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: 1px solid black
+}
+.highlight {
+    color: rgb(255, 251, 0) !important;
+    background-color: orangered !important;
+    border: 1px solid rgb(255, 251, 0) !important;
+}

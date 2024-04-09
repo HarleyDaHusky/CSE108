@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='create_acc.css') }}">
+    </head>
+    <body>
+        <form action="/create_acc" method="post" class="create_acc-form">
+            <h2>Monster's University</h2>
+            <div class="error-message">{{ error_message }}</div>
+            <div class="input-group">
+                <div>Create Username:</div>
+                <input type="text" name="username" id="user" placeholder="Username" required>
+                <div>First Name:</div>
+                <input type="text" name="firstname" id="firstname" placeholder="First Name" required>
+                <div>Last Name:</div>
+                <input type="text" name="lastname" id="lastname" placeholder="Last Name" required>
+            </div>
+            <div class="input-group">
+                <div>Create Password:</div>
+                <input type="password" name="password" id="pw" placeholder="Password" required>
+                <br>
+                <label for="account_type">Please select account type: </label>
+                <select name="account_type" class="account_type">
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <input type="submit" value="Create">
+        </form>
+    </body>
+</html>

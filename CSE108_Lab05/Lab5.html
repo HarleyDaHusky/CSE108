@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- inputs -->
+    <form>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br>
+        <label for="grade">Grade:</label>
+        <input type="number" id="grade" name="grade">
+    </form>
+
+    <!-- buttons -->
+    <button type="button" onclick="getGrades()">Click here to get grades</button>
+    <button type="button" onclick="getStudentGrade()">Click here to get a student's grade</button>
+    <button type="button" onclick="addStudent()">Click here to add a student</button>
+    <button type="button" onclick="editGrades()">Click here to edit a student's grade</button>
+    <button type="button" onclick="deleteStudent()">Click here to delete a student</button>
+
+    <br>
+    <!-- Display Area Declaration -->
+    <div id="dataContainer"></div>
+    <!-- Function code -->
+    <script>
+        // Function to format data as HTML
+        function formatDataToHTML(data) {
+            let html = '<table>';
+            for (const key in data) {
+                html+='<tr>';
+                if (data.hasOwnProperty(key)) {
+                    html += `<td>${key}: ${data[key]}</td>`;
+                }
+                html+='</tr>';
+            }
+            html += '</table>';
+            return html;
+        }
+        // Function to get ALL grades
+        function getGrades() {
+            fetch('https://amhep.pythonanywhere.com/grades')
+                .then(response => response.json())
+                .then(data => {
+                    // Display data in the HTML
+                    const dataContainer = document.getElementById('dataContainer');
+                    dataContainer.innerHTML = formatDataToHTML(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+        // Function to get Student Specific Grade
+        function getStudentGrade() {
+            var name = document.getElementById("name").value;
+            fetch('https://amhep.pythonanywhere.com/grades/' + name)
+                .then(response => response.json())
+                .then(data => {
+                    // Display data in the HTML
+                    const dataContainer = document.getElementById('dataContainer');
+                    dataContainer.innerHTML = formatDataToHTML(data);
+                })            
+            .then(() => {
+                console.log('Grade grabbed successfully');
+            })
+            .catch(error => {
+                console.error('Error grabbing grade:', error);
+            });
+        }
+        // Function to add new student and grade to DB
+        function addStudent() {
+            const newStudentName = document.getElementById('name').value;
+            const newGrade = document.getElementById('grade').value;
+
+            fetch('https://amhep.pythonanywhere.com/grades', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ "name": newStudentName, "grade": newGrade })
+            })
+            .then(() => {
+                console.log('Grade created successfully');
+            })
+            .catch(error => {
+                console.error('Error creating grade:', error);
+            });
+            getGrades();
+        }
+        // Function to edit a student's grade
+        function editGrades() {
+            const studentName = document.getElementById('name').value;
+            const newGrade = document.getElementById('grade').value;
+
+            fetch('https://amhep.pythonanywhere.com/grades/' + studentName, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ "grade": newGrade })
+            })
+            .then(() => {
+                console.log('Grade updated successfully');
+            })
+            .catch(error => {
+                console.error('Error updating grade:', error);
+            });
+            getGrades();
+        }
+        // Function to delete a student&Grade
+        function deleteStudent() {
+            const newStudentName = document.getElementById('name').value;
+            fetch('https://amhep.pythonanywhere.com/grades/' + newStudentName, {
+                method: 'DELETE',
+            })
+            .then(() => {
+                console.log('Grade deleted successfully');
+            })
+            .catch(error => {
+                console.error('Error deleting grade:', error);
+            });
+            getGrades();
+        }
+
+    </script>
+
+</body>
+
+</html>

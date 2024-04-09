@@ -1,0 +1,32 @@
+3           0
+CSE         1
+030         2
+Data Structures         3
+4           4
+Monday, Wednesday           5
+4:30pm          6
+5:45pm          7
+85              8
+CSE             1
+165             2
+Introduction to Object Oriented Programming         3
+4               4
+Tuesday, Thursday       5
+9:00am          6
+10:15am         7
+87              8
+BIO             1
+101             2
+Introduction to Biology     3
+3               4
+Tuesday, Thursday           5 
+11:00am             6
+12:15pm             7
+91                  8
+
+Output:
+COURSE 1: CSE030: Data Structures
+Number of Credits: 4
+Days of Lectures: Monday, Wednesday
+Lecture Time: 4:30pm –    5:45pm
+Stat: on average, students get 85% in this course

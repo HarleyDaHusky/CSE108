@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+</head>
+
+<body>
+    <!-- inputs -->
+    <form>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br>
+        <label for="grade">Grade:</label>
+        <input type="number" id="grade" name="grade">
+    </form>
+
+    <!-- buttons -->
+    <button type="button" onclick="getGrades()">Click here to get grades</button>
+    <button type="button" onclick="getStudentGrade()">Click here to get a student's grade</button>
+    <button type="button" onclick="addStudent()">Click here to add a student</button>
+    <button type="button" onclick="editGrades()">Click here to edit a student's grade</button>
+    <button type="button" onclick="deleteStudent()">Click here to delete a student</button>
+
+    <br>
+    <!-- Display Area Declaration -->
+    <div id="dataContainer"></div>
+    <!-- Function code -->
+    <script>
+        // Function to format data as HTML
+        function formatDataToHTML(data) {
+            let html = '<table>';
+            for (const key in data) {
+                html+='<tr>';
+                if (data.hasOwnProperty(key)) {
+                    html += `<td>${key}: ${data[key]}</td>`;
+                }
+                html+='</tr>';
+            }
+            html += '</table>';
+            return html;
+        }
+        function formatListToHTML(data) {
+            let html = '<table>';
+            data.forEach(grade => {
+                html += '<tr>'
+                html += `<td>${grade.student_name}, ${grade.grade}</td>`;
+                });
+                html += '</tr>';
+            return html;
+        }
+
+        // Function to get ALL grades
+        function getGrades() {
+            fetch('/grades')
+                .then(response => response.json())
+                .then(data => {
+                    // Display data in the HTML
+                    const dataContainer = document.getElementById('dataContainer');
+                    dataContainer.innerHTML = formatListToHTML(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+        // Function to get Student Specific Grade
+        function getStudentGrade() {
+            var name = document.getElementById("name").value;
+            fetch('/grades/' + name)
+                .then(response => response.json())
+                .then(data => {
+                    // Display data in the HTML
+                    const dataContainer = document.getElementById('dataContainer');
+                    dataContainer.innerHTML = formatDataToHTML(data);
+                })            
+            .then(() => {
+                console.log('Grade grabbed successfully');
+            })
+            .catch(error => {
+                console.error('Error grabbing grade:', error);
+            });
+        }
+        // Function to add new student and grade to DB
+        function addStudent() {
+            const newStudentName = document.getElementById('name').value;
+            const newGrade = document.getElementById('grade').value;
+
+            fetch('/grades/addStudent', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ "name": newStudentName, "grade": newGrade })
+            })
+            .then(() => {
+                console.log('Grade created successfully');
+                getGrades();
+            })
+            .catch(error => {
+                console.error('Error creating grade:', error);
+            });
+        }
+        // Function to edit a student's grade
+        function editGrades() {
+            const studentName = document.getElementById('name').value;
+            const newGrade = document.getElementById('grade').value;
+
+            fetch('/grades/editStudent/' + studentName, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ "grade": newGrade })
+            })
+            .then(() => {
+                console.log('Grade updated successfully');
+                getGrades();
+            })
+            .catch(error => {
+                console.error('Error updating grade:', error);
+            });
+        }
+        // Function to delete a student&Grade
+        function deleteStudent() {
+            const newStudentName = document.getElementById('name').value;
+            fetch('/grades/deleteStudent/' + newStudentName, {
+                method: 'DELETE',
+            })
+            .then(() => {
+                console.log('Grade deleted successfully');
+                getGrades();
+            })
+            .catch(error => {
+                console.error('Error deleting grade:', error);
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>
